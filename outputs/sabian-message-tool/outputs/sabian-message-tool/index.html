@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sabian Weekly Studio</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20212a;
+      --muted: #666b76;
+      --line: #d8d1c6;
+      --paper: #fbfaf6;
+      --panel: #fffdf9;
+      --accent: #a84f3d;
+      --teal: #2d6f74;
+      --olive: #687a45;
+      --gold: #b7862f;
+      --soft: rgba(255, 255, 255, .72);
+      --shadow: 0 18px 45px rgba(32, 33, 42, .12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 12%, rgba(168, 79, 61, .14), transparent 29%),
+        radial-gradient(circle at 84% 10%, rgba(45, 111, 116, .14), transparent 27%),
+        linear-gradient(135deg, #f5efe5 0%, #faf8f1 46%, #edf3f1 100%);
+    }
+
+    button, input, textarea, select { font: inherit; }
+
+    .app {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 42px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(34px, 5vw, 66px);
+      line-height: .96;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 680px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255, 253, 249, .88);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .controls {
+      position: sticky;
+      top: 18px;
+      padding: 18px;
+    }
+
+    .field { margin-bottom: 14px; }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--paper);
+      color: var(--ink);
+      padding: 11px 12px;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(45, 111, 116, .16);
+    }
+
+    textarea {
+      min-height: 86px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 44px 44px;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      min-height: 44px;
+      border: 0;
+      border-radius: 7px;
+      background: var(--ink);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    button.secondary {
+      background: var(--panel);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      font-size: 18px;
+    }
+
+    button:hover { filter: brightness(.96); }
+
+    .notice {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .report {
+      padding: clamp(22px, 4vw, 44px);
+      background:
+        linear-gradient(90deg, rgba(183, 134, 47, .18), transparent 28%, transparent 72%, rgba(45, 111, 116, .12)),
+        var(--panel);
+      border-radius: 8px;
+    }
+
+    .report-top {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 8px 0 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .degree {
+      min-width: 180px;
+      text-align: right;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--teal);
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    .degree small {
+      display: block;
+      color: var(--muted);
+      font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, sans-serif;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .lead {
+      margin: 26px 0 0;
+      font-size: clamp(18px, 2vw, 23px);
+      line-height: 1.9;
+    }
+
+    .chart-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .mini, .day {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: rgba(251, 250, 246, .72);
+    }
+
+    .mini h3, .day h3 {
+      margin: 0 0 10px;
+      color: var(--teal);
+      font-size: 14px;
+    }
+
+    .mini p, .day p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.85;
+    }
+
+    .week {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .day {
+      min-height: 210px;
+      padding: 14px;
+    }
+
+    .day .date {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .day h3 {
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .summary {
+      margin-top: 22px;
+      border-top: 1px solid var(--line);
+      padding-top: 20px;
+      color: var(--ink);
+      line-height: 1.9;
+      white-space: pre-wrap;
+    }
+
+    .section-title {
+      margin: 30px 0 0;
+      font-size: 16px;
+      color: var(--olive);
+      font-weight: 900;
+    }
+
+    @media (max-width: 1080px) {
+      main { grid-template-columns: 1fr; }
+      .controls { position: static; }
+      .week { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      header, .report-top { display: block; }
+      .degree { text-align: left; margin-top: 16px; }
+      .chart-row, .week { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      header, .controls, .notice { display: none; }
+      .app { width: 100%; padding: 0; }
+      main { display: block; }
+      .panel, .report { box-shadow: none; border: 0; }
+      .week { grid-template-columns: 1fr; }
+      .day { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>Sabian Weekly Studio</h1>
+        <p class="subtitle">出生の太陽サビアンと、今日から1週間のリアルタイムな太陽・月サビアンを重ねて、オリジナル週報メッセージを作ります。</p>
+      </div>
+      <div class="badge">Natal + Transit Weekly</div>
+    </header>
+
+    <main>
+      <section class="panel controls" aria-label="入力">
+        <div class="field">
+          <label for="name">お名前</label>
+          <input id="name" placeholder="例：Haruna">
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="birthdate">生年月日</label>
+            <input id="birthdate" type="date" value="1997-03-02">
+          </div>
+          <div class="field">
+            <label for="birthtime">出生時刻</label>
+            <input id="birthtime" type="time" value="21:30">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="birthplace">生まれた場所</label>
+          <input id="birthplace" value="大阪府茨木市">
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="lat">緯度</label>
+            <input id="lat" type="number" step="0.0001" value="34.8164">
+          </div>
+          <div class="field">
+            <label for="lon">経度</label>
+            <input id="lon" type="number" step="0.0001" value="135.5685">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="reportStart">週報開始日</label>
+            <input id="reportStart" type="date">
+          </div>
+          <div class="field">
+            <label for="tone">文体</label>
+            <select id="tone">
+              <option value="gentle">やさしく</option>
+              <option value="clear">まっすぐ</option>
+              <option value="mystic" selected>神秘的に</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="generate">週報を作成</button>
+          <button class="secondary" id="copy" title="コピー" aria-label="コピー">⧉</button>
+          <button class="secondary" id="print" title="印刷" aria-label="印刷">⌘</button>
+        </div>
+
+        <p class="notice">この試作品はブラウザ内の近似計算で、出生太陽・ASC・今日から7日間の太陽/月を出します。サビアン名は登録済みの実シンボルを表示し、未登録の度数は未登録と明示します。</p>
+      </section>
+
+      <section class="panel result" aria-live="polite">
+        <article class="report" id="report">
+          <div class="report-top">
+            <div>
+              <div class="kicker" id="recipient">Personal weekly sabian report</div>
+              <h2 id="title">出生図と今の空を重ねた1週間のメッセージ</h2>
+            </div>
+            <div class="degree" id="degree">--<small>出生太陽 / 今日の太陽 / 今日の月</small></div>
+          </div>
+
+          <p class="lead" id="lead">出生情報を入れて週報を作成すると、ここに全体メッセージが現れます。</p>
+
+          <div class="chart-row">
+            <section class="mini">
+              <h3>出生の核</h3>
+              <p id="natalCore">生まれ持った太陽サビアンの読みが入ります。</p>
+            </section>
+            <section class="mini">
+              <h3>今週の空模様</h3>
+              <p id="transitCore">現在の太陽と月のサビアンから、今週の流れを読みます。</p>
+            </section>
+            <section class="mini">
+              <h3>使い方</h3>
+              <p id="practice">1週間の過ごし方のポイントが入ります。</p>
+            </section>
+          </div>
+
+          <h3 class="section-title">7日間の週報</h3>
+          <div class="week" id="week"></div>
+
+          <div class="summary" id="summary">ここにコピー用の週報本文が作られます。</div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const signs = [
+      { name: "牡羊座", element: "火", seed: "始まりを恐れず、まだ形のない衝動に命を与える", mode: "自分から火を灯す" },
+      { name: "牡牛座", element: "地", seed: "感覚を信じ、価値あるものをゆっくり育てる", mode: "身体の納得を待つ" },
+      { name: "双子座", element: "風", seed: "言葉と好奇心で世界を結び直す", mode: "軽やかに試して学ぶ" },
+      { name: "蟹座", element: "水", seed: "心の居場所を守り、深い安心から動き出す", mode: "大切なものを包む" },
+      { name: "獅子座", element: "火", seed: "自分の中心から表現し、周囲に熱を灯す", mode: "喜びを隠さず示す" },
+      { name: "乙女座", element: "地", seed: "小さな整えを積み重ね、混沌に役割を与える", mode: "具体的に整える" },
+      { name: "天秤座", element: "風", seed: "関係性の鏡を通して、美しい均衡を見つける", mode: "対話で調律する" },
+      { name: "蠍座", element: "水", seed: "本音の奥へ潜り、古い殻を脱いで再生する", mode: "深く選び抜く" },
+      { name: "射手座", element: "火", seed: "遠くの意味を目指し、経験を智慧へ変える", mode: "視野を広げる" },
+      { name: "山羊座", element: "地", seed: "時間を味方にして、理想を現実の骨組みにする", mode: "責任を形にする" },
+      { name: "水瓶座", element: "風", seed: "自由な視点で常識をほどき、未来の形を招く", mode: "距離をとって眺める" },
+      { name: "魚座", element: "水", seed: "境界をやわらげ、見えないつながりに耳を澄ます", mode: "感じたものを祈りや表現に変える" }
+    ];
+
+    const sabianSymbols = {
+      "牡羊座28": "大きな失望した観客",
+      "蟹座9": "水の中の魚へと手を伸ばす小さな裸の少女",
+      "蟹座10": "カットされる途中の大きなダイヤモンド",
+      "蟹座11": "有名人を風刺するピエロ",
+      "蟹座12": "偉大な教師の生まれ変わりを示すオーラを持つ赤ん坊に授乳する中国人の女性",
+      "蟹座13": "少し曲げられた手と、とても目立つ親指",
+      "蟹座14": "北東の大きな暗い空間に向き合う、とても年老いた男",
+      "蟹座15": "食べすぎて楽しんだ人々の集まり",
+      "山羊座10": "手から餌をもらうアホウドリ",
+      "山羊座22": "敗北を潔く受け入れる将軍",
+      "水瓶座4": "ヒンドゥーの癒やし手",
+      "水瓶座16": "机に向かう大きなビジネスマン",
+      "水瓶座29": "さなぎから出てくる蝶",
+      "魚座11": "光明を求めて狭い道を進む人々",
+      "魚座12": "オカルト同胞団の聖所で行われる入門者たちの試験",
+      "魚座24": "人の住んでいる島"
+    };
+
+    const phaseWords = ["芽生え", "選択", "調整", "基礎づくり", "解放", "対話", "集中", "成熟", "転換", "受け渡し"];
+    const dayThemes = ["受け取る", "整える", "試す", "深める", "話す", "選ぶ", "次へ渡す"];
+    const weekday = ["日", "月", "火", "水", "木", "金", "土"];
+
+    const toneMap = {
+      gentle: {
+        open: "やさしく言うなら",
+        action: "無理に答えを出さず、心と身体が少し楽になる方を選んでください。",
+        close: "今週は、小さな安心を積み重ねるほど、自分を責めずに進める道が見えてきます。"
+      },
+      clear: {
+        open: "はっきり言うなら",
+        action: "全部を背負わず、今日扱うものをひとつに絞ってください。",
+        close: "今週は、抱えすぎをやめるほど、本当に動かしたい未来の輪郭が見えてきます。"
+      },
+      mystic: {
+        open: "星の言葉で読むなら",
+        action: "見えない合図を、あなたを苦しくしない日常の一手へ降ろしてください。",
+        close: "今週は、直感を自分にやさしい現実へ翻訳するための静かな通路が開きます。"
+      }
+    };
+
+    const lifeEaseGuides = {
+      "牡羊座": {
+        permission: "すぐに強くならなくても、最初の一歩だけで十分です",
+        boundary: "反射的に引き受ける前に、自分の熱が本当に向いているかを確認する",
+        care: "短く動いて、短く休む"
+      },
+      "牡牛座": {
+        permission: "急かされても、自分の感覚が納得する速度で大丈夫です",
+        boundary: "心地よさを削ってまで期待に合わせない",
+        care: "五感が落ち着くものに触れる"
+      },
+      "双子座": {
+        permission: "ひとつに決めきる前に、試して知る時間があって大丈夫です",
+        boundary: "考えすぎて疲れたら、情報を増やすより会話を減らす",
+        care: "短い言葉で今の気持ちをメモする"
+      },
+      "蟹座": {
+        permission: "守りたいものがあるからこそ、距離を置く選択も愛情です",
+        boundary: "相手の感情を全部自分の責任にしない",
+        care: "安心できる場所や人に戻る時間を作る"
+      },
+      "獅子座": {
+        permission: "注目されるためではなく、自分の喜びのために表現して大丈夫です",
+        boundary: "期待される役を演じ続けない",
+        care: "好きだと思えることを小さく見せる"
+      },
+      "乙女座": {
+        permission: "完璧に整う前でも、今のまま役に立てます",
+        boundary: "直すべきものを探し続けて自分を消耗させない",
+        care: "机、予定、持ち物のどれかひとつだけ整える"
+      },
+      "天秤座": {
+        permission: "相手を大切にしながら、自分の本音も同じ重さで置いて大丈夫です",
+        boundary: "場の空気を保つために、自分の違和感をなかったことにしない",
+        care: "迷ったら、静かな場所で自分の答えを先に聞く"
+      },
+      "蠍座": {
+        permission: "深く感じることは重さではなく、真実を選ぶ力です",
+        boundary: "全部を打ち明ける相手と、まだ守っておく領域を分ける",
+        care: "ひとりで深呼吸できる時間を確保する"
+      },
+      "射手座": {
+        permission: "意味を探す旅の途中でも、今ここで休んで大丈夫です",
+        boundary: "遠くの理想のために、今の身体の声を後回しにしない",
+        care: "外に出る、学ぶ、視界を広げる"
+      },
+      "山羊座": {
+        permission: "成果を出していない時間にも、あなたの価値はあります",
+        boundary: "責任感だけで予定を詰めすぎない",
+        care: "終わらせることをひとつ決める"
+      },
+      "水瓶座": {
+        permission: "人と同じ感じ方をしなくても、あなたの視点はちゃんと必要です",
+        boundary: "分かってもらうために自分を薄めすぎない",
+        care: "距離を取って、全体像を眺め直す"
+      },
+      "魚座": {
+        permission: "感じすぎる自分を直さなくて大丈夫です",
+        boundary: "人の痛みや期待を、全部自分の中に入れない",
+        care: "感じたものを言葉、音、絵、祈り、休息のどれかに逃がす"
+      }
+    };
+
+    const byId = (id) => document.getElementById(id);
+    const norm = (n) => ((n % 360) + 360) % 360;
+    const degToRad = (n) => n * Math.PI / 180;
+    const radToDeg = (n) => n * 180 / Math.PI;
+
+    function pad(n) { return String(n).padStart(2, "0"); }
+
+    function formatDateInput(date) {
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    }
+
+    function localDateTimeToUtc(dateValue, timeValue) {
+      const [y, m, d] = dateValue.split("-").map(Number);
+      const [hh, mm] = (timeValue || "12:00").split(":").map(Number);
+      return new Date(Date.UTC(y, m - 1, d, hh - 9, mm || 0, 0));
+    }
+
+    function reportDateToUtcNoon(dateValue) {
+      const [y, m, d] = dateValue.split("-").map(Number);
+      return new Date(Date.UTC(y, m - 1, d, 3, 0, 0));
+    }
+
+    function julianDay(date) {
+      let y = date.getUTCFullYear();
+      let m = date.getUTCMonth() + 1;
+      const d = date.getUTCDate() + (date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600) / 24;
+      if (m <= 2) { y -= 1; m += 12; }
+      const a = Math.floor(y / 100);
+      const b = 2 - a + Math.floor(a / 4);
+      return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + b - 1524.5;
+    }
+
+    function sunLongitude(date) {
+      const jd = julianDay(date);
+      const t = (jd - 2451545.0) / 36525;
+      const l0 = norm(280.46646 + 36000.76983 * t + 0.0003032 * t * t);
+      const m = norm(357.52911 + 35999.05029 * t - 0.0001537 * t * t);
+      const c = (1.914602 - 0.004817 * t - 0.000014 * t * t) * Math.sin(degToRad(m))
+        + (0.019993 - 0.000101 * t) * Math.sin(degToRad(2 * m))
+        + 0.000289 * Math.sin(degToRad(3 * m));
+      const omega = 125.04 - 1934.136 * t;
+      return norm(l0 + c - 0.00569 - 0.00478 * Math.sin(degToRad(omega)));
+    }
+
+    function moonLongitude(date) {
+      const jd = julianDay(date);
+      const d = jd - 2451545.0;
+      const l = norm(218.316 + 13.176396 * d);
+      const mMoon = norm(134.963 + 13.064993 * d);
+      const mSun = norm(357.529 + 0.98560028 * d);
+      const elong = norm(297.850 + 12.190749 * d);
+      return norm(l
+        + 6.289 * Math.sin(degToRad(mMoon))
+        + 1.274 * Math.sin(degToRad(2 * elong - mMoon))
+        + 0.658 * Math.sin(degToRad(2 * elong))
+        + 0.214 * Math.sin(degToRad(2 * mMoon))
+        - 0.186 * Math.sin(degToRad(mSun)));
+    }
+
+    function ascendantLongitude(date, lat, lon) {
+      const jd = julianDay(date);
+      const t = (jd - 2451545.0) / 36525;
+      const gmst = norm(280.46061837 + 360.98564736629 * (jd - 2451545) + 0.000387933 * t * t - t * t * t / 38710000);
+      const lst = norm(gmst + lon);
+      const eps = degToRad(23.439291 - 0.0130042 * t);
+      const theta = degToRad(lst);
+      const phi = degToRad(lat);
+      const asc = radToDeg(Math.atan2(-Math.cos(theta), Math.sin(theta) * Math.cos(eps) + Math.tan(phi) * Math.sin(eps)));
+      return norm(asc);
+    }
+
+    function symbolFromLongitude(longitude) {
+      const lon = norm(longitude);
+      const signIndex = Math.floor(lon / 30);
+      const degreeFloat = lon - signIndex * 30;
+      const sabianDegree = Math.floor(degreeFloat) + 1;
+      const minutes = Math.floor((degreeFloat - Math.floor(degreeFloat)) * 60);
+      const sign = signs[signIndex];
+      const symbolKey = `${sign.name}${sabianDegree}`;
+      const image = sabianSymbols[symbolKey] || "サビアンシンボル未登録";
+      const phase = phaseWords[Math.min(9, Math.floor((sabianDegree - 1) / 3))];
+      return {
+        lon,
+        sign,
+        signIndex,
+        degreeFloat,
+        degree: sabianDegree,
+        minutes,
+        image,
+        phase,
+        label: `${sign.name}${sabianDegree}度`,
+        precise: `${sign.name}${Math.floor(degreeFloat)}度${minutes}分`,
+        full: image === "サビアンシンボル未登録" ? `${sign.name}${sabianDegree}度（シンボル未登録）` : `${sign.name}${sabianDegree}度「${image}」`
+      };
+    }
+
+    function angleBetween(a, b) {
+      const diff = Math.abs(norm(a - b));
+      return diff > 180 ? 360 - diff : diff;
+    }
+
+    function relationship(natal, transit) {
+      const diff = angleBetween(natal.lon, transit.lon);
+      if (diff < 8) return "出生の核と今の空が重なり、自分の原点を更新するタイミング";
+      if (Math.abs(diff - 60) < 8) return "自然に流れがつながり、協力や追い風を受け取りやすいタイミング";
+      if (Math.abs(diff - 90) < 8) return "違和感が行動を促し、古い癖を調整するタイミング";
+      if (Math.abs(diff - 120) < 8) return "持ち味が素直に出やすく、才能を使いやすいタイミング";
+      if (Math.abs(diff - 180) < 8) return "他者や現実の反応を通して、自分の輪郭を見直すタイミング";
+      return "小さな気づきを拾いながら、今の流れに自分の核をなじませるタイミング";
+    }
+
+    function makeDailyMessage(name, natalSun, transitSun, transitMoon, dayIndex, tone, guide) {
+      const bridge = relationship(natalSun, transitSun);
+      const dayTheme = dayThemes[dayIndex % dayThemes.length];
+      const focusByDay = [
+        `今日はまず「${guide.permission}」という前提に戻る日です。`,
+        `今日は境界線を整える日です。${guide.boundary}ことが、生きやすさの土台になります。`,
+        `今日は小さく試す日です。正解を当てに行くより、少し楽になる選択をひとつ実験してください。`,
+        `今日は深く感じる日です。感じたことをすぐ結論にせず、${guide.care}ことで流れを逃がしてください。`,
+        `今日は人との間で調整する日です。言葉にするなら、説明よりも「私はこう感じている」から始めてください。`,
+        "今日は選び直す日です。期待に合わせるより、今の暮らし方や自分の扱い方が少し楽になる方を選んでください。",
+        `今日は次へ渡す日です。できなかったことより、今週少しでも楽になった扱い方をひとつ残してください。`
+      ];
+      return `${dayTheme}日。太陽は${transitSun.label}、月は${transitMoon.label}。出生太陽の${natalSun.full}は、${natalSun.sign.seed}ための核です。${bridge}です。${focusByDay[dayIndex % focusByDay.length]}月の象徴「${transitMoon.image}」は、その日の感情の入口。${tone.action}`;
+    }
+
+    function buildMessage() {
+      const birthdate = byId("birthdate").value;
+      if (!birthdate) {
+        byId("birthdate").focus();
+        return;
+      }
+
+      const birthtime = byId("birthtime").value || "12:00";
+      const rawName = byId("name").value.trim();
+      const name = rawName || "あなた";
+      const addressedName = rawName ? `${rawName}さん` : "あなた";
+      const reportOwner = rawName ? `${rawName}さんの` : "あなたへの";
+      const birthplace = byId("birthplace").value.trim() || "出生地";
+      const lat = Number(byId("lat").value || 35);
+      const lon = Number(byId("lon").value || 135);
+      const startValue = byId("reportStart").value || formatDateInput(new Date());
+      const tone = toneMap[byId("tone").value];
+
+      const birthUtc = localDateTimeToUtc(birthdate, birthtime);
+      const natalSun = symbolFromLongitude(sunLongitude(birthUtc));
+      const natalAsc = symbolFromLongitude(ascendantLongitude(birthUtc, lat, lon));
+      const todayUtc = reportDateToUtcNoon(startValue);
+      const currentSun = symbolFromLongitude(sunLongitude(todayUtc));
+      const currentMoon = symbolFromLongitude(moonLongitude(todayUtc));
+      const lifeGuide = lifeEaseGuides[natalSun.sign.name];
+      const weekRows = [];
+      const weekCopy = [];
+
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(todayUtc.getTime() + i * 86400000);
+        const local = new Date(date.getTime() + 9 * 3600000);
+        const sun = symbolFromLongitude(sunLongitude(date));
+        const moon = symbolFromLongitude(moonLongitude(date));
+        const message = makeDailyMessage(name, natalSun, sun, moon, i, tone, lifeGuide);
+        const dateLabel = `${local.getMonth() + 1}/${local.getDate()} (${weekday[local.getDay()]})`;
+        weekRows.push(`<section class="day"><div class="date">${dateLabel}</div><h3>${sun.full}</h3><p>${message}</p></section>`);
+        weekCopy.push(`${dateLabel}\n${sun.full} / 月：${moon.full}\n${message}`);
+      }
+
+      const lead = `${tone.open}、${addressedName}の出生太陽は${natalSun.full}です。この週報では、このサビアンを「生まれ持った核」として前提にします。${addressedName}は、${natalSun.sign.seed}人。だから今週のテーマは、最初から「生きやすさ」です。もっと頑張るためではなく、「${lifeGuide.permission}」と自分に許可を出しながら、自分を楽に扱う方法を見つける週です。今の太陽は${currentSun.full}、月は${currentMoon.full}から始まります。空の流れは、あなたを急かすものではなく、自分を楽に扱うための目印です。`;
+      const natalCore = `出生太陽は${natalSun.precise}、サビアンでは${natalSun.label}。この核は、${natalSun.sign.mode}ことで息を吹き返します。生きやすさの鍵は「${lifeGuide.permission}」。ASCは近似で${natalAsc.label}なので、外側には${natalAsc.sign.mode}印象が出やすい人です。`;
+      const transitCore = `週の始まりの太陽は${currentSun.label}、月は${currentMoon.label}。今週の空は「${currentSun.image}」と「${currentMoon.image}」を通して、意志と感情の間を行き来します。大切なのは、感情を正解にすることではなく、感情を自分を守る情報として扱うことです。`;
+      const practice = `毎日ひとつだけ「今日は何を背負わないか」と「少し楽になる一手」を書いてください。生きやすさは、大きな決断よりも、自分を責めない小さな扱い方から戻ってきます。${tone.close}`;
+      const summary = `${reportOwner}サビアン週報\n出生情報：${birthdate} ${birthtime} / ${birthplace}\n週報期間：${startValue} から7日間\n\n出生太陽：${natalSun.full}（近似 ${natalSun.precise}）\n出生ASC：${natalAsc.full}（近似）\n今週開始の太陽：${currentSun.full}\n今週開始の月：${currentMoon.full}\n\n${lead}\n\n出生の核：${natalCore}\n\n今週の空模様：${transitCore}\n\n生きやすくなるための使い方：${practice}\n\n7日間のメッセージ\n\n${weekCopy.join("\n\n")}\n\n※この文はブラウザ内の近似天体計算と登録済みの実サビアンシンボルをもとに作成しています。`;
+
+      byId("recipient").textContent = `${reportOwner}オーダーメイド週報`;
+      byId("title").textContent = `${natalSun.label}から読む、今週のサビアンメッセージ`;
+      byId("degree").innerHTML = `${natalSun.label}<small>出生太陽 ${natalSun.precise}<br>今日の太陽 ${currentSun.label}<br>今日の月 ${currentMoon.label}</small>`;
+      byId("lead").textContent = lead;
+      byId("natalCore").textContent = natalCore;
+      byId("transitCore").textContent = transitCore;
+      byId("practice").textContent = practice;
+      byId("week").innerHTML = weekRows.join("");
+      byId("summary").textContent = summary;
+    }
+
+    async function copySummary() {
+      const text = byId("summary").textContent;
+      await navigator.clipboard.writeText(text);
+      const copy = byId("copy");
+      const old = copy.textContent;
+      copy.textContent = "✓";
+      setTimeout(() => { copy.textContent = old; }, 900);
+    }
+
+    byId("reportStart").value = formatDateInput(new Date());
+    byId("generate").addEventListener("click", buildMessage);
+    byId("copy").addEventListener("click", copySummary);
+    byId("print").addEventListener("click", () => window.print());
+    buildMessage();
+  </script>
+</body>
+</html>
