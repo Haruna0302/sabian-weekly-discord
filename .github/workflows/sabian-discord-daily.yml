@@ -2,8 +2,8 @@ name: Sabian Discord Daily
 
 on:
   schedule:
-    # Temporary schedule test: every 5 minutes.
-    - cron: "*/5 * * * *"
+    # 08:05 JST. GitHub Actions cron uses UTC.
+    - cron: "5 23 * * *"
   workflow_dispatch:
 
 jobs:
