@@ -48,13 +48,13 @@ const weekday = ["日", "月", "火", "水", "木", "金", "土"];
 
 const toneMap = {
   gentle: {
-    action: "今日の合言葉は「少し楽になる方」です。大きな決断より、朝の支度、返信の量、予定の入れ方をひとつ軽くしてください。"
+    action: "今日の合言葉は「少し楽になる方」。大きな決断より、朝の支度、返信の量、予定の入れ方をひとつ軽くしてみましょう。"
   },
   clear: {
-    action: "今日の合言葉は「ひとつに絞る」です。全部を整えようとせず、連絡、片付け、仕事、体調のうち一番気になるものだけ扱ってください。"
+    action: "今日の合言葉は「ひとつに絞る」。全部を整えようとせず、連絡、片付け、仕事、体調のうち一番気になるものだけ扱うのがおすすめです。"
   },
   mystic: {
-    action: "今日の合言葉は「感じたことを生活に戻す」です。胸のざわつきは、予定を詰めすぎない、言葉を選ぶ、早めに休む、のどれかに変えてください。"
+    action: "今日の合言葉は「感じたことを生活に戻す」。胸のざわつきは、予定を詰めすぎない、言葉を選ぶ、早めに休む、のどれかに変えてみましょう。"
   }
 };
 
@@ -359,6 +359,54 @@ function practiceFor(symbol) {
   };
 }
 
+function stripEnding(text) {
+  return text.replace(/[。.]$/u, "");
+}
+
+function asRecommendation(text) {
+  const base = stripEnding(text)
+    .replace(/^今日は/u, "今日は")
+    .replace(/する$/u, "する")
+    .replace(/使う$/u, "使う")
+    .replace(/進める$/u, "進める")
+    .replace(/近づく$/u, "近づく")
+    .replace(/整える$/u, "整える")
+    .replace(/育てる$/u, "育てる")
+    .replace(/開ける$/u, "開ける")
+    .replace(/探す$/u, "探す")
+    .replace(/済ませる$/u, "済ませる")
+    .replace(/決める$/u, "決める")
+    .replace(/減らす$/u, "減らす")
+    .replace(/分けておく$/u, "分けておく")
+    .replace(/調整する$/u, "調整する");
+  return `${base}のがおすすめです。`;
+}
+
+function asInvitation(text) {
+  const base = stripEnding(text)
+    .replace(/^今日は/u, "今日は")
+    .replace(/話す$/u, "話してみましょう")
+    .replace(/渡す$/u, "渡してみましょう")
+    .replace(/反映する$/u, "反映してみましょう")
+    .replace(/開ける$/u, "開けてみましょう")
+    .replace(/つける$/u, "つけてみましょう")
+    .replace(/進める$/u, "進めてみましょう")
+    .replace(/近づく$/u, "近づいてみましょう")
+    .replace(/整える$/u, "整えてみましょう")
+    .replace(/みる$/u, "みましょう")
+    .replace(/育てる$/u, "育ててみましょう")
+    .replace(/使う$/u, "使ってみましょう")
+    .replace(/探す$/u, "探してみましょう")
+    .replace(/済ませる$/u, "済ませてみましょう")
+    .replace(/おく$/u, "おきましょう")
+    .replace(/決める$/u, "決めてみましょう")
+    .replace(/減らす$/u, "減らしてみましょう")
+    .replace(/選ぶ$/u, "選んでみましょう")
+    .replace(/進む$/u, "進んでみましょう")
+    .replace(/調整する$/u, "調整してみましょう");
+  return /ましょう$/u.test(base) ? `${base}。` : `${base}してみましょう。`;
+}
+
 function angleBetween(a, b) {
   const diff = Math.abs(norm(a - b));
   return diff > 180 ? 360 - diff : diff;
@@ -391,18 +439,19 @@ function dailyMessage(config, dateValue) {
   const dayIndex = Math.max(0, Math.floor((date - start) / 86400000)) % 7;
   const dayTheme = dayThemes[dayIndex];
   const focusByDay = [
-    `まず「${guide.permission}」という前提に戻る日です。朝の予定を見たら、今日の自分に優しくない用事をひとつ後ろへずらしてください。`,
-    `境界線を整える日です。${guide.boundary}ことを、返事の速度、会う時間、引き受ける量で具体的に調整してください。`,
-    "小さく試す日です。正解を当てに行くより、少し楽になる選択をひとつ実験してください。たとえば、いつもより短く伝える、先に休む、先に聞く、のどれかです。",
-    `深く感じる日です。感じたことをすぐ結論にせず、${guide.care}ことで流れを逃がしてください。気持ちを抱えたまま人に合わせすぎないのがコツです。`,
-    "人との間で調整する日です。言葉にするなら、説明よりも「私はこう感じている」から始めてください。相手を変えるより、自分の立ち位置を見えるようにする日です。",
-    "選び直す日です。期待に合わせるより、今の暮らし方や自分の扱い方が少し楽になる方を選んでください。迷ったら、今日の夜に疲れが残りにくい方です。",
-    "次へ渡す日です。できなかったことより、今週少しでも楽になった扱い方をひとつ残してください。来週の自分に渡すメモを一行だけ書くのも向いています。"
+    `まず「${guide.permission}」という前提に戻るタイミングです。朝の予定を見たら、今日の自分に優しくない用事をひとつ後ろへずらしてみましょう。`,
+    `境界線を整えたいタイミングです。${guide.boundary}ことを、返事の速度、会う時間、引き受ける量で具体的に調整するのがおすすめです。`,
+    "小さく試したいタイミングです。正解を当てに行くより、少し楽になる選択をひとつ実験してみましょう。たとえば、いつもより短く伝える、先に休む、先に聞く、のどれかです。",
+    `深く感じやすいタイミングです。感じたことをすぐ結論にせず、${guide.care}ことで流れを逃がしてみましょう。気持ちを抱えたまま人に合わせすぎないのがコツです。`,
+    "人との間で調整したいタイミングです。言葉にするなら、説明よりも「私はこう感じている」から始めてみましょう。相手を変えるより、自分の立ち位置を見えるようにする日です。",
+    "選び直したいタイミングです。期待に合わせるより、今の暮らし方や自分の扱い方が少し楽になる方を選ぶのがおすすめです。迷ったら、今日の夜に疲れが残りにくい方です。",
+    "次へ渡したいタイミングです。できなかったことより、今週少しでも楽になった扱い方をひとつ残してみましょう。来週の自分に渡すメモを一行だけ書くのも向いています。"
   ];
+  const sunAction = asRecommendation(sunPractice.action);
+  const moonAction = asInvitation(moonPractice.action);
   const dateLabel = `${local.getUTCMonth() + 1}/${local.getUTCDate()} (${weekday[local.getUTCDay()]})`;
   const body = `${dateLabel}のサビアン週報
 
-読む前提
 ${name}の出生太陽：${natalSun.full}
 これは「${natalPractice.image}」のように、${natalPractice.use}力です。がんばり方を増やすためではなく、${name}が生きやすい場所へ戻るための土台として読みます。
 
@@ -411,25 +460,24 @@ ${name}の出生太陽：${natalSun.full}
 月：${moon.full}
 
 今日の流れ
-今日は「${dayTheme}」の日。
+今日のテーマは「${dayTheme}」。
 出生太陽と今日の太陽の関係は、${relationship(natalSun, sun)}です。
 
-太陽の使い方
+☀️太陽からのメッセージ
 今日の太陽は「${sunPractice.image}」の景色です。
 外側の流れとしては、${sunPractice.use}ことが助けになります。
-具体的には、${sunPractice.action}。
+具体的には、${sunAction}
 
-月の使い方
+🌙月からのメッセージ
 今日の月は「${moonPractice.image}」の景色です。
 感情の入口としては、${moonPractice.use}ことが起こりやすい日です。
-気持ちが揺れたら、${moonPractice.action}。
+気持ちが揺れたら、${moonAction}
 
-生きやすさの一手
 ${focusByDay[dayIndex]}
 ${tone.action}
 
-今日やること
-${sunPractice.action}。
+おすすめのアクション
+${sunAction}
 
 やらなくていいこと
 ${moonPractice.avoid}。`;
