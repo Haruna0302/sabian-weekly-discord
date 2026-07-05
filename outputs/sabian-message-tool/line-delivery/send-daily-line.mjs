@@ -193,8 +193,8 @@ const symbolPractices = {
   },
   "魚座11": {
     image: "光を探して狭い道を進む人々",
-    use: "小さな希望を頼りに、道幅を狭くして進む",
-    action: "今日は目標を大きく広げず、今の自分が通れる細い道をひとつ選ぶ",
+    use: "遠くの正解よりも、今ほんの少し安心できる方向を探したくなる",
+    action: "今日は全部を決めようとせず、今ほんの少し安心できる方向をひとつ選ぶ",
     avoid: "全員に分かってもらえる道でないと進めない、と思うこと"
   },
   "魚座12": {
@@ -465,12 +465,12 @@ ${name}の出生太陽：${natalSun.full}
 
 ☀️太陽からのメッセージ
 今日の太陽は「${sunPractice.image}」の景色です。
-外側の流れとしては、${sunPractice.use}ことが助けになります。
+今日の過ごし方としては、${sunPractice.use}ことが助けになります。
 具体的には、${sunAction}
 
 🌙月からのメッセージ
 今日の月は「${moonPractice.image}」の景色です。
-感情の入口としては、${moonPractice.use}ことが起こりやすい日です。
+心の動きとしては、${moonPractice.use}日です。
 気持ちが揺れたら、${moonAction}
 
 ${focusByDay[dayIndex]}
