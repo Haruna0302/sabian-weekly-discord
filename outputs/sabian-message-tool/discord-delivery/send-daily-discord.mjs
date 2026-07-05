@@ -37,29 +37,59 @@ async function generateMessage(configPath, reportDate) {
   return stdout.trim();
 }
 
+function validateMessage(text) {
+  if (!text || text.length < 80) {
+    throw new Error("生成された本文が短すぎるため、Discord送信を止めました。");
+  }
+  if (text.includes("undefined") || text.includes("null")) {
+    throw new Error("生成された本文に不正な値が含まれるため、Discord送信を止めました。");
+  }
+}
+
+function splitMessage(text) {
+  const limit = 1850;
+  if (text.length <= limit) return [text];
+
+  const chunks = [];
+  let remaining = text;
+  while (remaining.length > limit) {
+    const slice = remaining.slice(0, limit);
+    const breakAt = Math.max(slice.lastIndexOf("\n\n"), slice.lastIndexOf("\n"));
+    const cutAt = breakAt > 500 ? breakAt : limit;
+    chunks.push(remaining.slice(0, cutAt).trim());
+    remaining = remaining.slice(cutAt).trim();
+  }
+  if (remaining) chunks.push(remaining);
+  return chunks.map((chunk, index) => chunks.length === 1 ? chunk : `${chunk}\n\n(${index + 1}/${chunks.length})`);
+}
+
 async function postDiscord(text) {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   if (!webhookUrl) {
     throw new Error("DISCORD_WEBHOOK_URL を設定してください。");
   }
 
-  const response = await fetch(webhookUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      content: text,
-      allowed_mentions: { parse: [] }
-    })
-  });
+  const chunks = splitMessage(text);
+  for (const chunk of chunks) {
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: chunk,
+        allowed_mentions: { parse: [] }
+      })
+    });
 
-  if (!response.ok) {
-    throw new Error(`Discord送信に失敗しました: ${response.status} ${await response.text()}`);
+    if (!response.ok) {
+      throw new Error(`Discord送信に失敗しました: ${response.status} ${await response.text()}`);
+    }
   }
 }
 
 const configPath = process.argv[2] || "outputs/sabian-message-tool/discord-delivery/discord-config.example.json";
 const reportDate = process.env.REPORT_DATE || "";
 const text = await generateMessage(configPath, reportDate);
+validateMessage(text);
 
 if (process.env.DRY_RUN === "1") {
   console.log(text);
