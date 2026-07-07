@@ -1,9 +1,6 @@
 name: Sabian Discord Daily
 
 on:
-  schedule:
-    # 08:05 JST. GitHub Actions cron uses UTC.
-    - cron: "5 23 * * *"
   workflow_dispatch:
 
 jobs:
