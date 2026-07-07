@@ -1,0 +1,33 @@
+name: Sabian LINE Morning
+
+on:
+  schedule:
+    # 08:10 JST. GitHub Actions cron uses UTC.
+    - cron: "10 23 * * *"
+  workflow_dispatch:
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    env:
+      LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+      LINE_USERS_JSON: ${{ secrets.LINE_USERS_JSON }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Prepare private LINE users file
+        run: |
+          if [ -z "$LINE_USERS_JSON" ]; then
+            echo "LINE_USERS_JSON secret is missing." >&2
+            exit 1
+          fi
+          printf '%s' "$LINE_USERS_JSON" > /tmp/line-users.json
+
+      - name: Send daily Sabian LINE message
+        run: node outputs/sabian-message-tool/line-delivery/send-daily-line-batch.mjs /tmp/line-users.json
