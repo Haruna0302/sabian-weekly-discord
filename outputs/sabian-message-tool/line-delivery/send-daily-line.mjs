@@ -290,9 +290,9 @@ function localDateTimeToUtc(dateValue, timeValue) {
   return new Date(Date.UTC(y, m - 1, d, hh - 9, mm || 0, 0));
 }
 
-function reportDateToUtcNoon(dateValue) {
+function reportDateToDeliveryUtc(dateValue) {
   const [y, m, d] = dateValue.split("-").map(Number);
-  return new Date(Date.UTC(y, m - 1, d, 3, 0, 0));
+  return new Date(Date.UTC(y, m - 1, d, -1, 10, 0));
 }
 
 function julianDay(date) {
@@ -428,14 +428,14 @@ function dailyMessage(config, dateValue) {
   const birthUtc = localDateTimeToUtc(config.birthdate, config.birthtime);
   const natalSun = symbolFromLongitude(sunLongitude(birthUtc));
   const guide = lifeEaseGuides[natalSun.sign.name];
-  const date = reportDateToUtcNoon(dateValue);
+  const date = reportDateToDeliveryUtc(dateValue);
   const local = new Date(date.getTime() + 9 * 3600000);
   const sun = symbolFromLongitude(sunLongitude(date));
   const moon = symbolFromLongitude(moonLongitude(date));
   const natalPractice = practiceFor(natalSun);
   const sunPractice = practiceFor(sun);
   const moonPractice = practiceFor(moon);
-  const start = reportDateToUtcNoon(config.weekStartDate || dateValue);
+  const start = reportDateToDeliveryUtc(config.weekStartDate || dateValue);
   const dayIndex = Math.max(0, Math.floor((date - start) / 86400000)) % 7;
   const dayTheme = dayThemes[dayIndex];
   const focusByDay = [
