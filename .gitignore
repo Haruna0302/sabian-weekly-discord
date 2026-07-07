@@ -1,2 +1,4 @@
 outputs/sabian-message-tool/discord-delivery/.env.local
 outputs/sabian-message-tool/discord-delivery/*.log
+outputs/sabian-message-tool/line-delivery/.env.local
+outputs/sabian-message-tool/line-delivery/line-users.local.json
