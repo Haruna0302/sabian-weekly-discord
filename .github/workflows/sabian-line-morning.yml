@@ -13,15 +13,35 @@ jobs:
       LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
       LINE_USERS_JSON: ${{ secrets.LINE_USERS_JSON }}
     steps:
+      - name: Check morning delivery window
+        id: morning-window
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "send=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          hour="$(TZ=Asia/Tokyo date +%H)"
+          minute="$(TZ=Asia/Tokyo date +%M)"
+          if [ "$hour" = "08" ] && [ "$minute" -le "30" ]; then
+            echo "send=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "send=false" >> "$GITHUB_OUTPUT"
+            echo "Scheduled run started outside 08:00-08:30 JST, so LINE delivery was skipped."
+          fi
+
       - name: Checkout
+        if: steps.morning-window.outputs.send == 'true'
         uses: actions/checkout@v4
 
       - name: Setup Node
+        if: steps.morning-window.outputs.send == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
       - name: Prepare private LINE users file
+        if: steps.morning-window.outputs.send == 'true'
         run: |
           if [ -z "$LINE_USERS_JSON" ]; then
             echo "LINE_USERS_JSON secret is missing." >&2
@@ -30,4 +50,5 @@ jobs:
           printf '%s' "$LINE_USERS_JSON" > /tmp/line-users.json
 
       - name: Send daily Sabian LINE message
+        if: steps.morning-window.outputs.send == 'true'
         run: node outputs/sabian-message-tool/line-delivery/send-daily-line-batch.mjs /tmp/line-users.json
